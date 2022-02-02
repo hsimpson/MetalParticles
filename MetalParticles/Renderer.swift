@@ -12,12 +12,11 @@ class Renderer : NSObject, MTKViewDelegate {
     
     let device: MTLDevice
     let commandQueue: MTLCommandQueue
-    let boxPipelineState: MTLRenderPipelineState
     let sampleCount: Int = 4
     var lastRenderTime: CFTimeInterval? = nil
     var currentTime: Double = 0
     let gpuLock = DispatchSemaphore(value: 1)
-    let boxGeometry: IndexedGeometry
+    var meshes: [Mesh] = []
     let camera: Camera
     
     init?(mtkView: MTKView) {
@@ -29,8 +28,9 @@ class Renderer : NSObject, MTKViewDelegate {
         
         commandQueue = device.makeCommandQueue()!
         
+        let boxPipeline: RenderPipeline
         do {
-            boxPipelineState = try Renderer.buildBoxRenderPipelineWith(device: device, metalKitView: mtkView, sampleCount: sampleCount)
+            boxPipeline = try RenderPipeline(device: device, metalKitView: mtkView, sampleCount: sampleCount, vertexFunction: "objectVertex", fragmentFunction: "objectFragment")
         } catch {
             print("Unable to compile render pipeline state: \(error)")
             return nil
@@ -42,7 +42,8 @@ class Renderer : NSObject, MTKViewDelegate {
         
         let boxDimension: vector_float3 = [8, 5, 5]
         let box = Box(dimension: boxDimension)
-        boxGeometry = IndexedGeometry(vertices: box.vertices, indices: box.indices, device: device)        
+        let boxGeometry = IndexedGeometry(vertices: box.vertices, indices: box.indices, device: device)
+        meshes.append(Mesh(renderPipeline: boxPipeline, geometry: boxGeometry, camera: camera))
     }
     
     func draw(in view: MTKView) {
@@ -69,13 +70,10 @@ class Renderer : NSObject, MTKViewDelegate {
         
         guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else { return }
         
-        renderEncoder.setRenderPipelineState(boxPipelineState)
-        
-        renderEncoder.setVertexBuffer(boxGeometry.vertexBuffer, offset: 0, index: 0)
-        renderEncoder.setVertexBuffer(camera.uniformBuffer, offset: 0, index: 1)
-        
-        renderEncoder.drawIndexedPrimitives(type: .line, indexCount: boxGeometry.indexCount, indexType: .uint16, indexBuffer: boxGeometry.indexBuffer, indexBufferOffset: 0)
-        
+        for mesh in meshes {
+            mesh.drawWithRenderCommendEncoder(encoder: renderEncoder)
+        }
+                
         renderEncoder.endEncoding()
         commandBuffer.present(view.currentDrawable!)
         
@@ -91,21 +89,5 @@ class Renderer : NSObject, MTKViewDelegate {
     }
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-    }
-    
-    class func buildBoxRenderPipelineWith(device: MTLDevice, metalKitView: MTKView, sampleCount: Int) throws -> MTLRenderPipelineState {
-        let pipelineDescriptor = MTLRenderPipelineDescriptor()
-        
-        let library = device.makeDefaultLibrary()
-        pipelineDescriptor.vertexFunction = library?.makeFunction(name: "boxVertexShader")
-        pipelineDescriptor.fragmentFunction = library?.makeFunction(name: "boxFragmentShader")
-        
-        pipelineDescriptor.colorAttachments[0].pixelFormat = metalKitView.colorPixelFormat
-        
-        if (sampleCount > 1) {
-            pipelineDescriptor.rasterSampleCount = sampleCount
-        }
-        
-        return try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
 }

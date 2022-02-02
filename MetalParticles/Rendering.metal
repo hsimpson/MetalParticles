@@ -16,7 +16,7 @@ struct VertexOut {
 };
 
 
-vertex VertexOut boxVertexShader(const device Vertex *vertexArray [[buffer(0)]],
+vertex VertexOut objectVertex(const device Vertex *vertexArray [[buffer(0)]],
                                  constant Camera &camera [[buffer(1)]],
                                  unsigned int vid [[vertex_id]]) {
     // Get the data for the current vertex.
@@ -29,6 +29,6 @@ vertex VertexOut boxVertexShader(const device Vertex *vertexArray [[buffer(0)]],
     return out;
 }
 
-fragment float4 boxFragmentShader(VertexOut interpolated [[stage_in]]) {
+fragment float4 objectFragment(VertexOut interpolated [[stage_in]]) {
     return interpolated.color;
 }
