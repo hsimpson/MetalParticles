@@ -7,19 +7,33 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BA926C3D279F72840071736B /* simd-extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA926C3C279F72840071736B /* simd-extensions.swift */; };
 		BAD1B378279F3C9200DC9672 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD1B377279F3C9200DC9672 /* AppDelegate.swift */; };
 		BAD1B37A279F3C9200DC9672 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD1B379279F3C9200DC9672 /* ViewController.swift */; };
 		BAD1B37C279F3C9300DC9672 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BAD1B37B279F3C9300DC9672 /* Assets.xcassets */; };
 		BAD1B37F279F3C9300DC9672 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BAD1B37D279F3C9300DC9672 /* Main.storyboard */; };
+		BAD1B387279F3FA500DC9672 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD1B386279F3FA500DC9672 /* Renderer.swift */; };
+		BAD1B389279F44E700DC9672 /* Box.metal in Sources */ = {isa = PBXBuildFile; fileRef = BAD1B388279F44E700DC9672 /* Box.metal */; };
+		BAD1B38F279F560500DC9672 /* IndexedGeomtry.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD1B38E279F560500DC9672 /* IndexedGeomtry.swift */; };
+		BAD1B391279F5D2600DC9672 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD1B390279F5D2600DC9672 /* Box.swift */; };
+		BAD1B393279F64BC00DC9672 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD1B392279F64BC00DC9672 /* Camera.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BA926C3C279F72840071736B /* simd-extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "simd-extensions.swift"; sourceTree = "<group>"; };
 		BAD1B374279F3C9200DC9672 /* MetalParticles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalParticles.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BAD1B377279F3C9200DC9672 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BAD1B379279F3C9200DC9672 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		BAD1B37B279F3C9300DC9672 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BAD1B37E279F3C9300DC9672 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		BAD1B380279F3C9300DC9672 /* MetalParticles.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MetalParticles.entitlements; sourceTree = "<group>"; };
+		BAD1B386279F3FA500DC9672 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
+		BAD1B388279F44E700DC9672 /* Box.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Box.metal; sourceTree = "<group>"; };
+		BAD1B38A279F4A8100DC9672 /* ShaderDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderDefinitions.h; sourceTree = "<group>"; };
+		BAD1B38B279F4ADB00DC9672 /* MetalParticles-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MetalParticles-Bridging-Header.h"; sourceTree = "<group>"; };
+		BAD1B38E279F560500DC9672 /* IndexedGeomtry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexedGeomtry.swift; sourceTree = "<group>"; };
+		BAD1B390279F5D2600DC9672 /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
+		BAD1B392279F64BC00DC9672 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,10 +67,18 @@
 			isa = PBXGroup;
 			children = (
 				BAD1B377279F3C9200DC9672 /* AppDelegate.swift */,
-				BAD1B379279F3C9200DC9672 /* ViewController.swift */,
 				BAD1B37B279F3C9300DC9672 /* Assets.xcassets */,
+				BAD1B388279F44E700DC9672 /* Box.metal */,
+				BAD1B390279F5D2600DC9672 /* Box.swift */,
+				BAD1B392279F64BC00DC9672 /* Camera.swift */,
+				BA926C3C279F72840071736B /* simd-extensions.swift */,
+				BAD1B38E279F560500DC9672 /* IndexedGeomtry.swift */,
 				BAD1B37D279F3C9300DC9672 /* Main.storyboard */,
+				BAD1B38B279F4ADB00DC9672 /* MetalParticles-Bridging-Header.h */,
 				BAD1B380279F3C9300DC9672 /* MetalParticles.entitlements */,
+				BAD1B386279F3FA500DC9672 /* Renderer.swift */,
+				BAD1B38A279F4A8100DC9672 /* ShaderDefinitions.h */,
+				BAD1B379279F3C9200DC9672 /* ViewController.swift */,
 			);
 			path = MetalParticles;
 			sourceTree = "<group>";
@@ -93,6 +115,7 @@
 				TargetAttributes = {
 					BAD1B373279F3C9200DC9672 = {
 						CreatedOnToolsVersion = 13.2.1;
+						LastSwiftMigration = 1320;
 					};
 				};
 			};
@@ -131,7 +154,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA926C3D279F72840071736B /* simd-extensions.swift in Sources */,
 				BAD1B37A279F3C9200DC9672 /* ViewController.swift in Sources */,
+				BAD1B387279F3FA500DC9672 /* Renderer.swift in Sources */,
+				BAD1B38F279F560500DC9672 /* IndexedGeomtry.swift in Sources */,
+				BAD1B391279F5D2600DC9672 /* Box.swift in Sources */,
+				BAD1B389279F44E700DC9672 /* Box.metal in Sources */,
+				BAD1B393279F64BC00DC9672 /* Camera.swift in Sources */,
 				BAD1B378279F3C9200DC9672 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -270,6 +299,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = MetalParticles/MetalParticles.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -286,6 +316,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.example.MetalParticles;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "MetalParticles/MetalParticles-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -295,6 +327,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = MetalParticles/MetalParticles.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -311,6 +344,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.example.MetalParticles;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "MetalParticles/MetalParticles-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
