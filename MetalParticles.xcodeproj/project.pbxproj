@@ -19,6 +19,8 @@
 		BAD1B38F279F560500DC9672 /* IndexedGeomtry.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD1B38E279F560500DC9672 /* IndexedGeomtry.swift */; };
 		BAD1B391279F5D2600DC9672 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD1B390279F5D2600DC9672 /* Box.swift */; };
 		BAD1B393279F64BC00DC9672 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD1B392279F64BC00DC9672 /* Camera.swift */; };
+		BAD4E8A727AC794000DC8C54 /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD4E8A627AC794000DC8C54 /* Entity.swift */; };
+		BAD4E8A927AC8CD300DC8C54 /* Crosshair.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD4E8A827AC8CD300DC8C54 /* Crosshair.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +40,8 @@
 		BAD1B38E279F560500DC9672 /* IndexedGeomtry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexedGeomtry.swift; sourceTree = "<group>"; };
 		BAD1B390279F5D2600DC9672 /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
 		BAD1B392279F64BC00DC9672 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
+		BAD4E8A627AC794000DC8C54 /* Entity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
+		BAD4E8A827AC8CD300DC8C54 /* Crosshair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crosshair.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,7 +80,9 @@
 				BAD1B388279F44E700DC9672 /* Rendering.metal */,
 				BAD1B377279F3C9200DC9672 /* AppDelegate.swift */,
 				BAD1B390279F5D2600DC9672 /* Box.swift */,
+				BAD4E8A827AC8CD300DC8C54 /* Crosshair.swift */,
 				BAD1B392279F64BC00DC9672 /* Camera.swift */,
+				BAD4E8A627AC794000DC8C54 /* Entity.swift */,
 				BAD1B38E279F560500DC9672 /* IndexedGeomtry.swift */,
 				BA8E1DE827AB2D6A00277165 /* Mesh.swift */,
 				BA8E1DE627AB2A0200277165 /* Pipeline.swift */,
@@ -160,6 +166,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BAD4E8A927AC8CD300DC8C54 /* Crosshair.swift in Sources */,
 				BA8E1DE727AB2A0200277165 /* Pipeline.swift in Sources */,
 				BA926C3D279F72840071736B /* simd-extensions.swift in Sources */,
 				BAD1B37A279F3C9200DC9672 /* ViewController.swift in Sources */,
@@ -167,6 +174,7 @@
 				BA8E1DE927AB2D6A00277165 /* Mesh.swift in Sources */,
 				BAD1B38F279F560500DC9672 /* IndexedGeomtry.swift in Sources */,
 				BAD1B391279F5D2600DC9672 /* Box.swift in Sources */,
+				BAD4E8A727AC794000DC8C54 /* Entity.swift in Sources */,
 				BAD1B389279F44E700DC9672 /* Rendering.metal in Sources */,
 				BAD1B393279F64BC00DC9672 /* Camera.swift in Sources */,
 				BAD1B378279F3C9200DC9672 /* AppDelegate.swift in Sources */,

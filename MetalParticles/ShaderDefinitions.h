@@ -20,5 +20,9 @@ struct Camera {
     matrix_float4x4 projectionMatrix;
 };
 
+struct Model {
+    matrix_float4x4 modelMatrix;
+};
+
 
 #endif /* ShaderDefinitions_h */

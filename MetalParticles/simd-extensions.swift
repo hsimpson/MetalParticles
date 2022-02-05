@@ -161,6 +161,26 @@ extension simd_float4x4 {
         return mat
         
     }
+    
+    public static func makeTranslationMatrix(translation: simd_float3) -> simd_float4x4 {
+        let mat = simd_float4x4.init(rows: [
+            [1, 0, 0, translation.x],
+            [0, 1, 0, translation.y],
+            [0, 0, 1, translation.z],
+            [0, 0, 0, 1]
+        ])
+        return mat
+    }
+    
+    public static func makeScaleMatrix(scale: simd_float3) -> simd_float4x4 {
+        let mat = simd_float4x4.init(rows: [
+            [scale.x, 0, 0, 0],
+            [0, scale.y, 0, 0],
+            [0, 0, scale.z, 0],
+            [0, 0, 0, 1]
+        ])
+        return mat
+    }
 }
 
 func deg2Rad(degrees: Float) -> Float {

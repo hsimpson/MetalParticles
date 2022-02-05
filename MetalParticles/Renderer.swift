@@ -16,8 +16,12 @@ class Renderer : NSObject, MTKViewDelegate {
     var lastRenderTime: CFTimeInterval? = nil
     var currentTime: Double = 0
     let gpuLock = DispatchSemaphore(value: 1)
+    let boxMesh: Mesh
+    let crosshairMesh: Mesh
     var meshes: [Mesh] = []
     let camera: Camera
+    let boxDimension: simd_float3
+    var currentMousePos: simd_float2 = [0, 0]
     
     init?(mtkView: MTKView) {
         device = mtkView.device!
@@ -28,9 +32,9 @@ class Renderer : NSObject, MTKViewDelegate {
         
         commandQueue = device.makeCommandQueue()!
         
-        let boxPipeline: RenderPipeline
+        let objectPipeline: RenderPipeline
         do {
-            boxPipeline = try RenderPipeline(device: device, metalKitView: mtkView, sampleCount: sampleCount, vertexFunction: "objectVertex", fragmentFunction: "objectFragment")
+            objectPipeline = try RenderPipeline(device: device, metalKitView: mtkView, sampleCount: sampleCount, vertexFunction: "objectVertex", fragmentFunction: "objectFragment")
         } catch {
             print("Unable to compile render pipeline state: \(error)")
             return nil
@@ -40,10 +44,18 @@ class Renderer : NSObject, MTKViewDelegate {
         camera.position = [0, 0, 15]
         camera.updateMatrices()
         
-        let boxDimension: vector_float3 = [8, 5, 5]
+        boxDimension = [8, 5, 5]
         let box = Box(dimension: boxDimension)
         let boxGeometry = IndexedGeometry(vertices: box.vertices, indices: box.indices, device: device)
-        meshes.append(Mesh(renderPipeline: boxPipeline, geometry: boxGeometry, camera: camera))
+        boxMesh = Mesh(renderPipeline: objectPipeline, geometry: boxGeometry, camera: camera, device: device)
+        
+        
+        let crosshair = Crosshair(dimension: [1, 1, 1])
+        let crosshairGeometry = IndexedGeometry(vertices: crosshair.vertices, indices: crosshair.indices, device: device)
+        crosshairMesh = Mesh(renderPipeline: objectPipeline, geometry: crosshairGeometry, camera: camera, device: device)
+        
+        meshes.append(boxMesh)
+        meshes.append(crosshairMesh)
     }
     
     func draw(in view: MTKView) {
@@ -72,8 +84,9 @@ class Renderer : NSObject, MTKViewDelegate {
         
         for mesh in meshes {
             mesh.drawWithRenderCommendEncoder(encoder: renderEncoder)
+            //mesh.updateModelMatrix()
         }
-                
+        
         renderEncoder.endEncoding()
         commandBuffer.present(view.currentDrawable!)
         
@@ -89,5 +102,81 @@ class Renderer : NSObject, MTKViewDelegate {
     }
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        let aspectRatio:Float = Float(size.width)/Float(size.height);
+        camera.aspectRatio = aspectRatio
+        camera.updatePerspectiveMatrix()
+    }
+    
+    func scrollWheel(with event: NSEvent) {
+        var z: Float = camera.position.z + Float(event.deltaY) * 0.2
+        z = Float.maximum(camera.zNear, Float.minimum(camera.zFar, z))
+        camera.position.z = z
+        camera.updateMatrices()
+    }
+    
+    func keyDown(with event: NSEvent) {
+        let movementSpeed: Float = 0.25
+        let pos = crosshairMesh.position
+        
+        var x = pos.x
+        var y = pos.y
+        var z = pos.z
+        
+        switch(event.characters) {
+        case "a":
+            x -= movementSpeed
+        case "d":
+            x += movementSpeed
+        case "w":
+            z -= movementSpeed
+        case "s":
+            z += movementSpeed
+        default:
+            break
+        }
+        
+        switch(event.specialKey) {
+        case NSEvent.SpecialKey.pageUp:
+            y += movementSpeed
+        case NSEvent.SpecialKey.pageDown:
+            y -= movementSpeed
+        default:
+            break
+        }
+        
+        let half = boxDimension / 2 + 0.0001
+        
+        if(x < -half.x || x > half.x) {
+            x = crosshairMesh.position.x
+        }
+        if(y < -half.y || y > half.y) {
+            y = crosshairMesh.position.y
+        }
+        if(z < -half.z || z > half.z) {
+            z = crosshairMesh.position.z
+        }
+        
+        crosshairMesh.setPostion(position: [x, y, z])
+        
+        // TODO: compute pipeline handlings
+        
+    }
+    
+    func keyUp(with event: NSEvent) {
+        // TODO: compute pipeline handlings
+    }
+    
+    func mouseDragged(with event: NSEvent) {
+        let newPos: simd_float2 = [Float(event.locationInWindow.x), Float(event.locationInWindow.y)]
+        
+        let offset = (newPos - currentMousePos) * 0.2
+        camera.rotateEuler(euler: [0, offset.x, 0]);
+        camera.rotateEuler(euler: [-offset.y, 0, 0]);
+        
+        currentMousePos = newPos
+    }
+
+    func mouseDown(with event: NSEvent) {
+        currentMousePos = [Float(event.locationInWindow.x), Float(event.locationInWindow.y)]
     }
 }

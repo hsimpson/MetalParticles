@@ -5,7 +5,6 @@
 //  Created by Daniel Toplak on 24.01.22.
 //
 
-import Foundation
 import Metal
 
 class Camera {
