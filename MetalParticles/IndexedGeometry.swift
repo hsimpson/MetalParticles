@@ -8,15 +8,14 @@
 import Foundation
 import Metal
 
-class IndexedGeometry {
+class IndexedGeometry: Geometry {
     
-    let vertexBuffer: MTLBuffer
     let indexBuffer: MTLBuffer
     let indexCount: Int
     
-    init(vertices: [Vertex], indices: [UInt16], device: MTLDevice) {
-        vertexBuffer = device.makeBuffer(bytes: vertices, length: vertices.count * MemoryLayout<Vertex>.stride, options: [])!
+    init(vertices: UnsafeRawPointer, vertexStride: Int, vertexCount: Int, indices: [UInt16], primitiveType: MTLPrimitiveType, device: MTLDevice) {
         indexBuffer = device.makeBuffer(bytes: indices, length: indices.count * MemoryLayout<UInt16>.size, options: [])!
         indexCount = indices.count
+        super.init(vertices: vertices, vertexStride: vertexStride, vertexCount: vertexCount, primitiveType: primitiveType, device: device)
     }
 }

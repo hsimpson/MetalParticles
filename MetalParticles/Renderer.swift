@@ -22,6 +22,7 @@ class Renderer : NSObject, MTKViewDelegate {
     let camera: Camera
     let boxDimension: simd_float3
     var currentMousePos: simd_float2 = [0, 0]
+    var particleCount: UInt32 = 100000
     
     init?(mtkView: MTKView) {
         device = mtkView.device!
@@ -32,9 +33,11 @@ class Renderer : NSObject, MTKViewDelegate {
         
         commandQueue = device.makeCommandQueue()!
         
-        let objectPipeline: RenderPipeline
+        let objectRenderPipeline: RenderPipeline
+        let particleRenderPipeline: RenderPipeline
         do {
-            objectPipeline = try RenderPipeline(device: device, metalKitView: mtkView, sampleCount: sampleCount, vertexFunction: "objectVertex", fragmentFunction: "objectFragment")
+            objectRenderPipeline = try RenderPipeline(device: device, metalKitView: mtkView, sampleCount: sampleCount, vertexFunction: "objectVertex", fragmentFunction: "objectFragment")
+            particleRenderPipeline = try RenderPipeline(device: device, metalKitView: mtkView, sampleCount: sampleCount, vertexFunction: "particleVertex", fragmentFunction: "particleFragment")
         } catch {
             print("Unable to compile render pipeline state: \(error)")
             return nil
@@ -45,17 +48,19 @@ class Renderer : NSObject, MTKViewDelegate {
         camera.updateMatrices()
         
         boxDimension = [8, 5, 5]
-        let box = Box(dimension: boxDimension)
-        let boxGeometry = IndexedGeometry(vertices: box.vertices, indices: box.indices, device: device)
-        boxMesh = Mesh(renderPipeline: objectPipeline, geometry: boxGeometry, camera: camera, device: device)
+        let boxGeometry = BoxGeometry(dimension: boxDimension, device: device)
+        boxMesh = Mesh(renderPipeline: objectRenderPipeline, geometry: boxGeometry, camera: camera, device: device)
         
         
-        let crosshair = Crosshair(dimension: [1, 1, 1])
-        let crosshairGeometry = IndexedGeometry(vertices: crosshair.vertices, indices: crosshair.indices, device: device)
-        crosshairMesh = Mesh(renderPipeline: objectPipeline, geometry: crosshairGeometry, camera: camera, device: device)
+        let crosshairGeometry = CrosshairGeometry(dimension: [1, 1, 1], device: device)
+        crosshairMesh = Mesh(renderPipeline: objectRenderPipeline, geometry: crosshairGeometry, camera: camera, device: device)
+        
+        let particleGeometry = ParticleGeometry(particleCount: particleCount, boxDimension: boxDimension, device: device)
+        let particleMesh = Mesh(renderPipeline: particleRenderPipeline, geometry: particleGeometry, camera: camera, device: device)
         
         meshes.append(boxMesh)
         meshes.append(crosshairMesh)
+        meshes.append(particleMesh)
     }
     
     func draw(in view: MTKView) {

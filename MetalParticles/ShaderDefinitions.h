@@ -10,18 +10,23 @@
 
 #include <simd/simd.h>
 
-struct Vertex {
-    vector_float3 pos;
-    vector_float4 color;
+struct GeometryVertex {
+    simd_float3 pos;
+    simd_float4 color;
 };
 
+struct ParticleVertex {
+    simd_float3 pos;
+};
+
+
 struct Camera {
-    matrix_float4x4 viewMatrix;
-    matrix_float4x4 projectionMatrix;
+    simd_float4x4 viewMatrix;
+    simd_float4x4 projectionMatrix;
 };
 
 struct Model {
-    matrix_float4x4 modelMatrix;
+    simd_float4x4 modelMatrix;
 };
 
 

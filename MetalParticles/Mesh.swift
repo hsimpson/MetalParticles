@@ -9,11 +9,11 @@ import Metal
 
 class Mesh: Entity {
     private let renderPipeline: RenderPipeline
-    private let geometry: IndexedGeometry
+    private let geometry: Geometry
     private let camera: Camera
     private let uniformBuffer: MTLBuffer
     
-    init(renderPipeline: RenderPipeline, geometry: IndexedGeometry, camera: Camera, device: MTLDevice) {
+    init(renderPipeline: RenderPipeline, geometry: Geometry, camera: Camera, device: MTLDevice) {
         self.renderPipeline = renderPipeline
         self.geometry = geometry
         self.camera = camera
@@ -26,7 +26,12 @@ class Mesh: Entity {
         encoder.setVertexBuffer(camera.uniformBuffer, offset: 0, index: 1)
         encoder.setVertexBuffer(uniformBuffer, offset: 0, index: 2)
         
-        encoder.drawIndexedPrimitives(type: .line, indexCount: geometry.indexCount, indexType: .uint16, indexBuffer: geometry.indexBuffer, indexBufferOffset: 0)
+        if(geometry is IndexedGeometry) {
+            let indexedGeometry = geometry as! IndexedGeometry
+            encoder.drawIndexedPrimitives(type: indexedGeometry.primitiveType, indexCount: indexedGeometry.indexCount, indexType: .uint16, indexBuffer: indexedGeometry.indexBuffer, indexBufferOffset: 0)
+        } else {
+            encoder.drawPrimitives(type: geometry.primitiveType, vertexStart: 0, vertexCount: geometry.vertexCount)
+        }
     }
     
     func updateUniformBuffer() {
