@@ -8,12 +8,16 @@
 import Cocoa
 import Metal
 import MetalKit
+import SwiftUI
+import Combine
 
 class ViewController: NSViewController {
     
     var mtkView: MTKView!
     var renderer: Renderer!
-    
+    let statsObservable = StatsObservable()
+    var contentView: NSHostingController<ContentView>!
+      
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -31,17 +35,37 @@ class ViewController: NSViewController {
         print("My GPU is: \(defaultDevice)")
         mtkView.device = defaultDevice
         
-        guard let tempRenderer = Renderer(mtkView: mtkView) else {
+        var tempRenderer: Renderer
+        do {
+            try tempRenderer = Renderer(mtkView: mtkView, statsObservable: statsObservable)!
+        } catch {
             print("Render failed to initalize")
             return
         }
-        renderer = tempRenderer
-        mtkView.delegate = renderer
         
+        renderer = tempRenderer
+        
+        contentView = NSHostingController(rootView: ContentView(statsObservable: statsObservable, renderer: renderer))
+        
+        
+        mtkView.delegate = renderer
+        mtkView.preferredFramesPerSecond = 120
+        
+        view.frame.size.width = 1280
+        view.frame.size.height = 720
         mtkView.frame.size.width = 1280
         mtkView.frame.size.height = 720
         
+        addChild(contentView)
+        view.addSubview(contentView.view)
+        contentView.view.translatesAutoresizingMaskIntoConstraints = false
+        contentView.view.topAnchor.constraint(equalTo:view.topAnchor).isActive = true
+        //contentView.view.bottomAnchor.constraint(equalTo:view.bottomAnchor).isActive = true
+        //contentView.view.leftAnchor.constraint(equalTo:view.leftAnchor).isActive = true
+        //contentView.view.rightAnchor.constraint(equalTo:view.rightAnchor).isActive = true
+        
         // Set a block that fires when a key is pressed
+
         NSEvent.addLocalMonitorForEvents(matching: .keyDown) {
             (keyEvent) -> NSEvent? in
             if self.keyDown(with: keyEvent) {
@@ -50,7 +74,7 @@ class ViewController: NSViewController {
                 return keyEvent
             }
         }
-        
+
         // Set a block that fires when a key is released
         NSEvent.addLocalMonitorForEvents(matching: .keyUp) {
             (keyEvent) -> NSEvent? in
@@ -76,11 +100,13 @@ class ViewController: NSViewController {
         renderer.keyDown(with: event)
         return true;
     }
-    
+
     func keyUp(with event: NSEvent) -> Bool {
         renderer.keyUp(with: event)
         return true;
     }
+    
+    
     
     override func mouseDragged(with event: NSEvent) {
         renderer.mouseDragged(with: event)

@@ -18,7 +18,7 @@ class Camera {
     var aspectRatio: Float = 1.0
     var zNear: Float = 0.1
     var zFar: Float = 1000
-    let uniformBuffer: MTLBuffer
+    let cameraBuffer: MetalBuffer
     
     init(fovY: Float, aspectRatio: Float, zNear: Float, zFar: Float, device: MTLDevice) {
         self.fovY = fovY
@@ -26,7 +26,8 @@ class Camera {
         self.zNear = zNear
         self.zFar = zFar
         
-        uniformBuffer = device.makeBuffer(length: 2 * MemoryLayout<simd_float4x4>.stride, options: [])!
+        let buffer = device.makeBuffer(length: 2 * MemoryLayout<simd_float4x4>.stride, options: [])!
+        cameraBuffer = MetalBuffer(buffer: buffer, offset: 0, index: 1)
     }
     
     func updateMatrices(){
@@ -47,7 +48,7 @@ class Camera {
     }
     
     func updateUniformBuffer() {
-        let bufferPtr = uniformBuffer.contents()
+        let bufferPtr = cameraBuffer.buffer.contents()
         let size = MemoryLayout<simd_float4x4>.stride
         bufferPtr.storeBytes(of: viewMatrix, as: simd_float4x4.self)
         bufferPtr.storeBytes(of: perspectiveMatrix, toByteOffset: size, as: simd_float4x4.self)

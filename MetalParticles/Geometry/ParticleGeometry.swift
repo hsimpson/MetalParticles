@@ -13,7 +13,7 @@ func createRandomParticles(count: UInt32, dimension: simd_float3) -> [ParticleVe
         v.append(ParticleVertex(pos: [
             Float.random(in: 0.0..<1.0) * dimension.x - dimension.x / 2.0,
             Float.random(in: 0.0..<1.0) * dimension.y - dimension.y / 2.0,
-            Float.random(in: 0.0..<1.0) * dimension.z - dimension.z / 2.0
+            Float.random(in: 0.0..<1.0) * dimension.z - dimension.z / 2.0,
         ]))
     }
     return v

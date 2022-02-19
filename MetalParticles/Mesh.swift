@@ -8,23 +8,32 @@
 import Metal
 
 class Mesh: Entity {
-    private let renderPipeline: RenderPipeline
-    private let geometry: Geometry
-    private let camera: Camera
-    private let uniformBuffer: MTLBuffer
+    let renderPipeline: RenderPipeline
+    let geometry: Geometry
+    let camera: Camera
+    var vertexBuffers: [MetalBuffer] = []
+    var fragmentBuffers: [MetalBuffer] = []
     
     init(renderPipeline: RenderPipeline, geometry: Geometry, camera: Camera, device: MTLDevice) {
         self.renderPipeline = renderPipeline
         self.geometry = geometry
         self.camera = camera
-        uniformBuffer = device.makeBuffer(length: MemoryLayout<simd_float4x4>.stride, options: [])!
+        super.init(device: device)
     }
     
-    func drawWithRenderCommendEncoder(encoder: MTLRenderCommandEncoder) {
+    func drawWithRenderCommandEncoder(encoder: MTLRenderCommandEncoder) {
         encoder.setRenderPipelineState(self.renderPipeline.pipeLineState)
-        encoder.setVertexBuffer(geometry.vertexBuffer, offset: 0, index: 0)
-        encoder.setVertexBuffer(camera.uniformBuffer, offset: 0, index: 1)
-        encoder.setVertexBuffer(uniformBuffer, offset: 0, index: 2)
+        encoder.setVertexBuffer(camera.cameraBuffer.buffer, offset: camera.cameraBuffer.offset, index: camera.cameraBuffer.index)
+        encoder.setVertexBuffer(entityBuffer.buffer, offset: entityBuffer.offset, index: entityBuffer.index)
+        
+        for vertexBuffer in vertexBuffers {
+            encoder.setVertexBuffer(vertexBuffer.buffer, offset: vertexBuffer.offset, index: vertexBuffer.index)
+        }
+        
+        for fragmentBuffer in fragmentBuffers {
+            encoder.setFragmentBuffer(fragmentBuffer.buffer, offset: fragmentBuffer.offset, index: fragmentBuffer.index)
+        }
+        
         
         if(geometry is IndexedGeometry) {
             let indexedGeometry = geometry as! IndexedGeometry
@@ -32,15 +41,5 @@ class Mesh: Entity {
         } else {
             encoder.drawPrimitives(type: geometry.primitiveType, vertexStart: 0, vertexCount: geometry.vertexCount)
         }
-    }
-    
-    func updateUniformBuffer() {
-        let bufferPtr = uniformBuffer.contents()
-        bufferPtr.storeBytes(of: modelMatrix, as: simd_float4x4.self)
-    }
-    
-    override func updateModelMatrix() {
-        super.updateModelMatrix()
-        updateUniformBuffer()
     }
 }

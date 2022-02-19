@@ -7,6 +7,7 @@
 
 import Metal
 import MetalKit
+import Combine
 
 class Renderer : NSObject, MTKViewDelegate {
     
@@ -22,10 +23,18 @@ class Renderer : NSObject, MTKViewDelegate {
     let camera: Camera
     let boxDimension: simd_float3
     var currentMousePos: simd_float2 = [0, 0]
-    var particleCount: UInt32 = 100000
+    var particleCount: UInt32 = 20_000
+    let computePipeline: ComputePipeline
+    let statsObservable: StatsObservable
+    var frameCount: UInt32 = 0
+    var frameTimeSum: Double = 0
+    var computeTimeSum: Double = 0
+    var particleRenderParams: ParticleRenderParams
+    let particleRenderParamBuffer: MetalBuffer
     
-    init?(mtkView: MTKView) {
+    init?(mtkView: MTKView, statsObservable: StatsObservable) throws {
         device = mtkView.device!
+        self.statsObservable = statsObservable
         
         if (sampleCount > 1) {
             mtkView.sampleCount = sampleCount
@@ -33,15 +42,9 @@ class Renderer : NSObject, MTKViewDelegate {
         
         commandQueue = device.makeCommandQueue()!
         
-        let objectRenderPipeline: RenderPipeline
-        let particleRenderPipeline: RenderPipeline
-        do {
-            objectRenderPipeline = try RenderPipeline(device: device, metalKitView: mtkView, sampleCount: sampleCount, vertexFunction: "objectVertex", fragmentFunction: "objectFragment")
-            particleRenderPipeline = try RenderPipeline(device: device, metalKitView: mtkView, sampleCount: sampleCount, vertexFunction: "particleVertex", fragmentFunction: "particleFragment")
-        } catch {
-            print("Unable to compile render pipeline state: \(error)")
-            return nil
-        }
+        let objectRenderPipeline = try RenderPipeline(device: device, metalKitView: mtkView, sampleCount: sampleCount, vertexFunction: "objectVertex", fragmentFunction: "objectFragment")
+        let particleRenderPipeline = try RenderPipeline(device: device, metalKitView: mtkView, sampleCount: sampleCount, vertexFunction: "particleVertex", fragmentFunction: "particleFragment")
+       
         
         camera = Camera(fovY: 45.0, aspectRatio: Float(mtkView.bounds.width / mtkView.bounds.height), zNear: 0.1, zFar: 1000, device: device)
         camera.position = [0, 0, 15]
@@ -50,31 +53,63 @@ class Renderer : NSObject, MTKViewDelegate {
         boxDimension = [8, 5, 5]
         let boxGeometry = BoxGeometry(dimension: boxDimension, device: device)
         boxMesh = Mesh(renderPipeline: objectRenderPipeline, geometry: boxGeometry, camera: camera, device: device)
+        boxMesh.vertexBuffers.append(boxGeometry.vertexBuffer)
         
         
         let crosshairGeometry = CrosshairGeometry(dimension: [1, 1, 1], device: device)
         crosshairMesh = Mesh(renderPipeline: objectRenderPipeline, geometry: crosshairGeometry, camera: camera, device: device)
+        crosshairMesh.vertexBuffers.append(crosshairGeometry.vertexBuffer)
         
         let particleGeometry = ParticleGeometry(particleCount: particleCount, boxDimension: boxDimension, device: device)
         let particleMesh = Mesh(renderPipeline: particleRenderPipeline, geometry: particleGeometry, camera: camera, device: device)
+        particleMesh.vertexBuffers.append(particleGeometry.vertexBuffer)
+        
+        particleRenderParams = ParticleRenderParams(color: [1.0, 0.0, 0.0, 1.0], pointSize: 1.0)
+        let paramsBuffer = device.makeBuffer(bytes: UnsafeRawPointer(&particleRenderParams), length: MemoryLayout<ParticleRenderParams>.stride, options: [])!
+        particleRenderParamBuffer = MetalBuffer(buffer: paramsBuffer, offset: 0, index: 3)
+        particleMesh.vertexBuffers.append(particleRenderParamBuffer)
+        
+        // create the compue pipeline
+        computePipeline = try ComputePipeline(device: device, computeFunction: "calcParticles", drawMesh: particleMesh, boxDimension: boxDimension)
         
         meshes.append(boxMesh)
         meshes.append(crosshairMesh)
         meshes.append(particleMesh)
+        
     }
     
     func draw(in view: MTKView) {
-        gpuLock.wait()
+        //gpuLock.wait()
         
         // compute delta time
-        let systemTime = CACurrentMediaTime()
-        let timeDifference = (lastRenderTime == nil) ? 0 : (systemTime - lastRenderTime!)
+        let currentTime = CACurrentMediaTime()
+        let timeDifference = (lastRenderTime == nil) ? 0 : (currentTime - lastRenderTime!)
         
-        update(deltaTime: timeDifference)
+        frameTimeSum += timeDifference
         
         // Save this system time
-        lastRenderTime = systemTime
+        lastRenderTime = currentTime
         
+        computePass(deltaTime: timeDifference)
+        let computeTimeEnd = CACurrentMediaTime()
+        computeTimeSum += computeTimeEnd - currentTime
+        renderPass(view: view)
+        
+        
+        
+        frameCount += 1
+        
+        if(frameTimeSum >= 1) {
+            statsObservable.frameTime = frameTimeSum / Double(frameCount)
+            statsObservable.computeTime = computeTimeSum / Double(frameCount)
+            frameCount = 0
+            frameTimeSum = 0
+            computeTimeSum = 0
+        }
+        
+    }
+    
+    func renderPass(view: MTKView) {
         guard let commandBuffer = commandQueue.makeCommandBuffer() else { return }
         guard let renderPassDescriptor = view.currentRenderPassDescriptor else {return}
         
@@ -88,22 +123,35 @@ class Renderer : NSObject, MTKViewDelegate {
         guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else { return }
         
         for mesh in meshes {
-            mesh.drawWithRenderCommendEncoder(encoder: renderEncoder)
+            mesh.drawWithRenderCommandEncoder(encoder: renderEncoder)
             //mesh.updateModelMatrix()
         }
         
         renderEncoder.endEncoding()
         commandBuffer.present(view.currentDrawable!)
         
+        /*
         commandBuffer.addCompletedHandler {
             _ in self.gpuLock.signal()
         }
+        */
         
         commandBuffer.commit()
+        commandBuffer.waitUntilCompleted()
     }
     
-    func update(deltaTime: CFTimeInterval) {
+    func computePass(deltaTime: CFTimeInterval) {
         currentTime += deltaTime
+        
+        guard let commandBuffer = commandQueue.makeCommandBuffer() else { return }
+        guard let computeEncoder = commandBuffer.makeComputeCommandEncoder() else {return}
+        
+        
+        computePipeline.computeWithCommandEncoder(encoder: computeEncoder, deltaTime: deltaTime)
+        
+        computeEncoder.endEncoding()
+        commandBuffer.commit()
+        commandBuffer.waitUntilCompleted()
     }
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
@@ -183,5 +231,20 @@ class Renderer : NSObject, MTKViewDelegate {
 
     func mouseDown(with event: NSEvent) {
         currentMousePos = [Float(event.locationInWindow.x), Float(event.locationInWindow.y)]
+    }
+    
+    func updateParticleRenderParams() {
+        let bufferPtr = particleRenderParamBuffer.buffer.contents()
+        bufferPtr.storeBytes(of: particleRenderParams, as: ParticleRenderParams.self)
+    }
+    
+    func updateColor(color: CGColor) {
+        particleRenderParams.color = [
+            Float(color.components![0]),
+            Float(color.components![1]),
+            Float(color.components![2]),
+            Float(color.components![3])
+        ]
+        updateParticleRenderParams()
     }
 }

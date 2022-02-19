@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BA8E1DE727AB2A0200277165 /* Pipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA8E1DE627AB2A0200277165 /* Pipeline.swift */; };
+		BA44CB0E27C04E7300E247DE /* Observables.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA44CB0D27C04E7300E247DE /* Observables.swift */; };
+		BA44CB1027C06D1000E247DE /* MetalBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA44CB0F27C06D1000E247DE /* MetalBuffer.swift */; };
+		BA8E1DE727AB2A0200277165 /* RenderPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA8E1DE627AB2A0200277165 /* RenderPipeline.swift */; };
 		BA8E1DE927AB2D6A00277165 /* Mesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA8E1DE827AB2D6A00277165 /* Mesh.swift */; };
 		BA926C3D279F72840071736B /* simd-extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA926C3C279F72840071736B /* simd-extensions.swift */; };
 		BAD1B378279F3C9200DC9672 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD1B377279F3C9200DC9672 /* AppDelegate.swift */; };
@@ -23,10 +25,15 @@
 		BAD4E8A927AC8CD300DC8C54 /* CrosshairGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD4E8A827AC8CD300DC8C54 /* CrosshairGeometry.swift */; };
 		BAD53D5F27BAFFE300ADA95C /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD53D5E27BAFFE300ADA95C /* Geometry.swift */; };
 		BAD53D6127BB08E300ADA95C /* ParticleGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD53D6027BB08E300ADA95C /* ParticleGeometry.swift */; };
+		BAECD4CB27BD86EE006EE6B3 /* ComputePipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAECD4CA27BD86EE006EE6B3 /* ComputePipeline.swift */; };
+		BAECD4CD27BD8E54006EE6B3 /* Compute.metal in Sources */ = {isa = PBXBuildFile; fileRef = BAECD4CC27BD8E54006EE6B3 /* Compute.metal */; };
+		BAECD4CF27BDBD32006EE6B3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAECD4CE27BDBD32006EE6B3 /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		BA8E1DE627AB2A0200277165 /* Pipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pipeline.swift; sourceTree = "<group>"; };
+		BA44CB0D27C04E7300E247DE /* Observables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observables.swift; sourceTree = "<group>"; };
+		BA44CB0F27C06D1000E247DE /* MetalBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalBuffer.swift; sourceTree = "<group>"; };
+		BA8E1DE627AB2A0200277165 /* RenderPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderPipeline.swift; sourceTree = "<group>"; };
 		BA8E1DE827AB2D6A00277165 /* Mesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mesh.swift; sourceTree = "<group>"; };
 		BA926C3C279F72840071736B /* simd-extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "simd-extensions.swift"; sourceTree = "<group>"; };
 		BAD1B374279F3C9200DC9672 /* MetalParticles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalParticles.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -46,6 +53,9 @@
 		BAD4E8A827AC8CD300DC8C54 /* CrosshairGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosshairGeometry.swift; sourceTree = "<group>"; };
 		BAD53D5E27BAFFE300ADA95C /* Geometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geometry.swift; sourceTree = "<group>"; };
 		BAD53D6027BB08E300ADA95C /* ParticleGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleGeometry.swift; sourceTree = "<group>"; };
+		BAECD4CA27BD86EE006EE6B3 /* ComputePipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputePipeline.swift; sourceTree = "<group>"; };
+		BAECD4CC27BD8E54006EE6B3 /* Compute.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Compute.metal; sourceTree = "<group>"; };
+		BAECD4CE27BDBD32006EE6B3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +69,40 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BAA800B227C07F2100B94BD1 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				BAD1B377279F3C9200DC9672 /* AppDelegate.swift */,
+				BAECD4CE27BDBD32006EE6B3 /* ContentView.swift */,
+				BAD1B379279F3C9200DC9672 /* ViewController.swift */,
+				BAD1B37D279F3C9300DC9672 /* Main.storyboard */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		BAA800B327C07FDA00B94BD1 /* Shader */ = {
+			isa = PBXGroup;
+			children = (
+				BAD1B38B279F4ADB00DC9672 /* MetalParticles-Bridging-Header.h */,
+				BAD1B38A279F4A8100DC9672 /* ShaderDefinitions.h */,
+				BAECD4CC27BD8E54006EE6B3 /* Compute.metal */,
+				BAD1B388279F44E700DC9672 /* Rendering.metal */,
+			);
+			path = Shader;
+			sourceTree = "<group>";
+		};
+		BAA800B427C0800E00B94BD1 /* Geometry */ = {
+			isa = PBXGroup;
+			children = (
+				BAD1B390279F5D2600DC9672 /* BoxGeometry.swift */,
+				BAD4E8A827AC8CD300DC8C54 /* CrosshairGeometry.swift */,
+				BAD53D5E27BAFFE300ADA95C /* Geometry.swift */,
+				BAD1B38E279F560500DC9672 /* IndexedGeometry.swift */,
+				BAD53D6027BB08E300ADA95C /* ParticleGeometry.swift */,
+			);
+			path = Geometry;
+			sourceTree = "<group>";
+		};
 		BAD1B36B279F3C9200DC9672 = {
 			isa = PBXGroup;
 			children = (
@@ -78,25 +122,20 @@
 		BAD1B376279F3C9200DC9672 /* MetalParticles */ = {
 			isa = PBXGroup;
 			children = (
-				BAD1B380279F3C9300DC9672 /* MetalParticles.entitlements */,
-				BAD1B38B279F4ADB00DC9672 /* MetalParticles-Bridging-Header.h */,
-				BAD1B38A279F4A8100DC9672 /* ShaderDefinitions.h */,
-				BAD1B388279F44E700DC9672 /* Rendering.metal */,
-				BAD1B377279F3C9200DC9672 /* AppDelegate.swift */,
-				BAD1B390279F5D2600DC9672 /* BoxGeometry.swift */,
-				BAD1B392279F64BC00DC9672 /* Camera.swift */,
-				BAD4E8A827AC8CD300DC8C54 /* CrosshairGeometry.swift */,
-				BAD4E8A627AC794000DC8C54 /* Entity.swift */,
-				BAD53D5E27BAFFE300ADA95C /* Geometry.swift */,
-				BAD1B38E279F560500DC9672 /* IndexedGeometry.swift */,
-				BA8E1DE827AB2D6A00277165 /* Mesh.swift */,
-				BAD53D6027BB08E300ADA95C /* ParticleGeometry.swift */,
-				BA8E1DE627AB2A0200277165 /* Pipeline.swift */,
-				BAD1B386279F3FA500DC9672 /* Renderer.swift */,
-				BA926C3C279F72840071736B /* simd-extensions.swift */,
-				BAD1B379279F3C9200DC9672 /* ViewController.swift */,
 				BAD1B37B279F3C9300DC9672 /* Assets.xcassets */,
-				BAD1B37D279F3C9300DC9672 /* Main.storyboard */,
+				BAD1B380279F3C9300DC9672 /* MetalParticles.entitlements */,
+				BAA800B227C07F2100B94BD1 /* UI */,
+				BAA800B427C0800E00B94BD1 /* Geometry */,
+				BAA800B327C07FDA00B94BD1 /* Shader */,
+				BAD1B392279F64BC00DC9672 /* Camera.swift */,
+				BAECD4CA27BD86EE006EE6B3 /* ComputePipeline.swift */,
+				BAD4E8A627AC794000DC8C54 /* Entity.swift */,
+				BA8E1DE827AB2D6A00277165 /* Mesh.swift */,
+				BA44CB0F27C06D1000E247DE /* MetalBuffer.swift */,
+				BA44CB0D27C04E7300E247DE /* Observables.swift */,
+				BAD1B386279F3FA500DC9672 /* Renderer.swift */,
+				BA8E1DE627AB2A0200277165 /* RenderPipeline.swift */,
+				BA926C3C279F72840071736B /* simd-extensions.swift */,
 			);
 			path = MetalParticles;
 			sourceTree = "<group>";
@@ -174,15 +213,20 @@
 			files = (
 				BAD4E8A927AC8CD300DC8C54 /* CrosshairGeometry.swift in Sources */,
 				BAD53D6127BB08E300ADA95C /* ParticleGeometry.swift in Sources */,
-				BA8E1DE727AB2A0200277165 /* Pipeline.swift in Sources */,
+				BA8E1DE727AB2A0200277165 /* RenderPipeline.swift in Sources */,
 				BA926C3D279F72840071736B /* simd-extensions.swift in Sources */,
 				BAD1B37A279F3C9200DC9672 /* ViewController.swift in Sources */,
 				BAD53D5F27BAFFE300ADA95C /* Geometry.swift in Sources */,
+				BA44CB1027C06D1000E247DE /* MetalBuffer.swift in Sources */,
 				BAD1B387279F3FA500DC9672 /* Renderer.swift in Sources */,
+				BAECD4CF27BDBD32006EE6B3 /* ContentView.swift in Sources */,
 				BA8E1DE927AB2D6A00277165 /* Mesh.swift in Sources */,
 				BAD1B38F279F560500DC9672 /* IndexedGeometry.swift in Sources */,
 				BAD1B391279F5D2600DC9672 /* BoxGeometry.swift in Sources */,
 				BAD4E8A727AC794000DC8C54 /* Entity.swift in Sources */,
+				BAECD4CD27BD8E54006EE6B3 /* Compute.metal in Sources */,
+				BAECD4CB27BD86EE006EE6B3 /* ComputePipeline.swift in Sources */,
+				BA44CB0E27C04E7300E247DE /* Observables.swift in Sources */,
 				BAD1B389279F44E700DC9672 /* Rendering.metal in Sources */,
 				BAD1B393279F64BC00DC9672 /* Camera.swift in Sources */,
 				BAD1B378279F3C9200DC9672 /* AppDelegate.swift in Sources */,

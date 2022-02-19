@@ -18,7 +18,14 @@ class RenderPipeline {
         pipelineDescriptor.vertexFunction = library?.makeFunction(name: vertexFunction)
         pipelineDescriptor.fragmentFunction = library?.makeFunction(name: fragmentFunction)
         
-        pipelineDescriptor.colorAttachments[0].pixelFormat = metalKitView.colorPixelFormat
+        let colorAttachment0 = pipelineDescriptor.colorAttachments[0]!
+        
+        colorAttachment0.pixelFormat = metalKitView.colorPixelFormat
+        colorAttachment0.isBlendingEnabled = true
+        colorAttachment0.rgbBlendOperation = .add
+        colorAttachment0.alphaBlendOperation = .add
+        colorAttachment0.sourceRGBBlendFactor = .sourceAlpha
+        colorAttachment0.sourceAlphaBlendFactor = .sourceAlpha
         
         if (sampleCount > 1) {
             pipelineDescriptor.rasterSampleCount = sampleCount

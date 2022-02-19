@@ -17,6 +17,7 @@ struct VertexOut {
 
 struct ParticleOut {
     float4 pos [[position]];
+    float4 color;
     float pointSize [[point_size]];
 };
 
@@ -39,18 +40,20 @@ fragment float4 objectFragment(VertexOut interpolated [[stage_in]]) {
 }
 
 vertex ParticleOut particleVertex(const device ParticleVertex *vertexArray [[buffer(0)]],
-                                constant Camera &camera [[buffer(1)]],
-                                constant Model &model [[buffer(2)]],
-                                unsigned int vid [[vertex_id]]) {
+                                  constant Camera &camera [[buffer(1)]],
+                                  constant Model &model [[buffer(2)]],
+                                  constant ParticleRenderParams &particleRenderParams [[buffer(3)]],
+                                  unsigned int vid [[vertex_id]]) {
     
     ParticleVertex in = vertexArray[vid];
     ParticleOut out;
     out.pos = camera.projectionMatrix * camera.viewMatrix * model.modelMatrix * float4(in.pos.xyz, 1.0);
-    out.pointSize = 1.0;
+    out.pointSize = particleRenderParams.pointSize;
+    out.color = particleRenderParams.color;
     
     return out;
 }
 
 fragment float4 particleFragment(ParticleOut interpolated [[stage_in]]) {
-    return float4(1.0, 0.0, 0.0, 1.0);
+    return interpolated.color;
 }
